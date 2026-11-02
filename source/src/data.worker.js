@@ -3,7 +3,7 @@ import {kinematics,inside,gradient,finite} from './metrics.mjs';
 import proj4 from 'proj4';
 
 let utmCrs='+proj=utm +zone=43 +datum=WGS84 +units=m +no_defs';
-let currentPic='MH09HH1544',root='/zarr/dams/MH09HH1544',meta,dates,rawX,rawY,x,y,latitude,longitude,velocity,coherence;
+let currentPic='MH09HH1544',root='',meta,dates,rawX,rawY,x,y,latitude,longitude,velocity,coherence;
 let numDates=281,chunkT=35;
 let cache=new Map(),maxCache=32,currentSlice=null,currentT=-1,analysisEpoch=0;
 let currentShift={dx:0,dy:0},currentMeta=null;
@@ -64,7 +64,7 @@ function applyShift(dx,dy){
 async function init(payload){
   let pic=payload?.pic||'MH09HH1544';
   currentPic=pic;
-  root='/zarr/dams/'+pic;
+  root='/api/assets/'+encodeURIComponent(new URLSearchParams(self.location.search).get('asset')||'')+'/zarr/dams/'+encodeURIComponent(pic);
   cache.clear();
   currentSlice=null;
   currentT=-1;

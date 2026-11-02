@@ -3,7 +3,7 @@ import ActivityChart from './ActivityChart.jsx';
 import SeasonalChart from './SeasonalChart.jsx';
 import OverviewChart from './OverviewChart.jsx';
 import React,{useState,useEffect,useMemo,useRef} from 'react';import{createRoot}from'react-dom/client';import{Canvas,useThree,useFrame}from'@react-three/fiber';import*as THREE from'three';import{OrbitControls}from'three/examples/jsm/controls/OrbitControls.js';import'@fontsource/eb-garamond/400.css';import'@fontsource/eb-garamond/500.css';import'@fontsource/eb-garamond/700.css';import'@fontsource/jetbrains-mono/400.css';import'./style.css';
-const worker=new Worker(new URL('./data.worker.js?v=40',import.meta.url),{type:'module'}),fmt=(v,n=1)=>Number.isFinite(v)?v.toLocaleString(undefined,{maximumFractionDigits:n,minimumFractionDigits:n}):'—';let serial=0;const send=(type,payload)=>{let id=++serial;worker.postMessage({type,payload,id});return id;};
+const worker=new Worker(new URL('./data.worker.js?asset='+encodeURIComponent(new URLSearchParams(location.search).get('asset')||''),import.meta.url),{type:'module'}),fmt=(v,n=1)=>Number.isFinite(v)?v.toLocaleString(undefined,{maximumFractionDigits:n,minimumFractionDigits:n}):'—';let serial=0;const send=(type,payload)=>{let id=++serial;worker.postMessage({type,payload,id});return id;};
 function Chart({data=[],color='#2563eb',height=86,unit='',valueUnit='',xlabels,selected,zero=false,dates=[],isPopup=false,fillHeight=false}){
   const containerRef=useRef(null);
   const [dims,setDims]=useState({w:420,h:typeof height==='number'?height:86});
@@ -303,7 +303,7 @@ function App(){
   useEffect(()=>{
     let cancelled=false;
     function loadMasterCatalog(isInitial=false){
-      fetch('/zarr/zarr.json',{cache:'no-store'})
+      fetch('/api/assets/'+encodeURIComponent(new URLSearchParams(location.search).get('asset')||'')+'/zarr/zarr.json',{cache:'no-store'})
         .then(r=>{
           if(!r.ok)throw new Error('Failed to read master Zarr root');
           return r.json();
